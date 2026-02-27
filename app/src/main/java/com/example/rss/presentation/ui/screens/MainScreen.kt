@@ -26,6 +26,11 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.automirrored.filled.DriveFileMove
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -33,7 +38,8 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,10 +50,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,7 +81,7 @@ import com.example.rss.presentation.viewmodel.RssSourceViewModel
 private const val CATEGORY_PREFS = "rss_categories_prefs"
 private const val CATEGORY_KEY = "custom_categories"
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController,
@@ -137,7 +145,7 @@ fun MainScreen(
                 navigationIcon = {
                     IconButton(onClick = { sidebarExpanded = !sidebarExpanded }) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Menu,
+                            imageVector = Icons.Filled.Menu,
                             contentDescription = "展开或折叠侧边栏",
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -156,13 +164,13 @@ fun MainScreen(
                         }
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Refresh,
+                            imageVector = Icons.Filled.Refresh,
                             contentDescription = "刷新当前 RSS 源"
                         )
                     }
                     IconButton(onClick = { navController.navigate(SETTINGS_ROUTE) }) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Settings,
+                            imageVector = Icons.Filled.Settings,
                             contentDescription = "打开设置"
                         )
                     }
@@ -192,7 +200,7 @@ fun MainScreen(
                         TextButton(onClick = { createCategoryDialog = true }) { Text("新建分类") }
                     }
                     TextButton(onClick = { navController.navigate(ADD_RSS_SOURCE_ROUTE) }) { Text("+ 添加 RSS 源") }
-                    Divider()
+                    HorizontalDivider()
                     LazyColumn(
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -485,7 +493,7 @@ private fun CategoryRow(
         if (canRename) {
             IconButton(onClick = onRename, modifier = Modifier.size(30.dp)) {
                 Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.Edit,
+                    imageVector = Icons.Filled.Edit,
                     contentDescription = "编辑分类"
                 )
             }
@@ -518,7 +526,7 @@ private fun SourceRow(
         )
         IconButton(onClick = onMove, modifier = Modifier.size(28.dp)) {
             Icon(
-                imageVector = androidx.compose.material.icons.Icons.Default.DriveFileMove,
+                imageVector = Icons.AutoMirrored.Filled.DriveFileMove,
                 contentDescription = "移动到其他分类"
             )
         }
@@ -598,5 +606,5 @@ private fun ArticleCard(
 }
 
 @Composable
-private fun <T> kotlinx.coroutines.flow.StateFlow<T>.collectAsStateCompat():
-    androidx.compose.runtime.State<T> = androidx.compose.runtime.collectAsState(this)
+private fun <T> kotlinx.coroutines.flow.StateFlow<T>.collectAsStateCompat(): State<T> =
+    this.collectAsState()
